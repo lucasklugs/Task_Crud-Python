@@ -27,18 +27,21 @@ class TaskCrud:
         print("Tarefa criada")
 
     def read_task(self):
-        if not self.tasks:
+        results = self.repository.read_table()
+        if not results:
             print("Nenhuma tarefa encontrada.")
         else:
-            self.repository.read_table()
+            for result in results:
+                print(f"ID: {result[0]}, Prioridade: {result[1]}, Descrição: {result[2]}, Status: {result[3]}, Data Limite: {result[4]}")
 
     def mark_done(self, task_id):
         for task in self.tasks:
             if task.id == task_id:
                 task.status = "concluido"
+                self.repository.markdone_table(task_id)
                 print("Tarefa marcada como concluida.")
                 return
-            print("Tarefa não encontrada...")
+        print("Tarefa não encontrada...")
 
     def delete_task(self, task_id):
         for task in self.tasks:

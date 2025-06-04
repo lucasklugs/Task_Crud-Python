@@ -37,12 +37,25 @@ class TaskRepository:
         cursor.close()
 
     
-    def read_table(self, task):
+    def read_table(self):
         query = """
-        SELECT priority, desc, status, t_date FROM task;
+        SELECT id, priority, desc, status, t_date FROM task;
         """
         cursor = self.create_cursor()
-        result = cursor.execute(query (task.pr, task.desc, task.status, task.date))
-        
+        cursor.execute(query)
+        result = cursor.fetchall()  # A várivel result deterá todos os itens consultados por meio do fetchall() 
         cursor.close()
-        
+        return result  # Retorna result para que a váriavel seja chamada no task.py
+    
+    def markdone_table(self, task_id):
+        query = """
+        UPDATE task
+        SET status = 'concluido'
+        WHERE id = ?; 
+        """
+        cursor = self.create_cursor()
+        cursor.execute(query, (task_id,))
+        self.conn.commit()
+        if cursor.rowcount == 0:
+            print("Tarefa não encontrada ou status não alterado")
+        cursor.close()
