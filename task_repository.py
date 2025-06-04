@@ -35,4 +35,14 @@ class TaskRepository:
             print("Tarefa não incluida")
         self.conn.commit()
         cursor.close()
+
+    
+    def read_table(self, task):
+        query = """
+        SELECT priority, desc, status, t_date FROM task;
+        """
+        cursor = self.create_cursor()
+        result = cursor.execute(query (task.pr, task.desc, task.status, task.date))
+        
+        cursor.close()
         

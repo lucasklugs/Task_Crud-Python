@@ -30,8 +30,7 @@ class TaskCrud:
         if not self.tasks:
             print("Nenhuma tarefa encontrada.")
         else:
-            for task in self.tasks:
-                print(task)
+            self.repository.read_table()
 
     def mark_done(self, task_id):
         for task in self.tasks:

@@ -14,5 +14,5 @@ def get_connection():
         DATABASE_PATH,
         detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES,
     )
-    conn.row_factory = sqlite3.Row  # Permite acessar as
+    conn.row_factory = sqlite3.Row  
     return conn
