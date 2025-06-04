@@ -43,7 +43,7 @@ class TaskCrud:
                 self.tasks.remove(task)
                 print("Tarefa removida")
                 return
-            print("Tarefa não encontrada")
+            print("Tarefa não encontrada...")
 
     def edit_task(self, task_id, priority, desc):
         for task in self.tasks:
@@ -52,11 +52,11 @@ class TaskCrud:
                 task.desc = desc
                 print("Tarefa editada")
                 return
-            print("Tarefa não encontrada")
+            print("Tarefa não encontrada...")
 
-#Deleta todos os 
-    def delete_done(self):
-        for task in self.tasks:
+# Deleta todos as tarefas com status "concluido"
+    def delete_done(self): # Não precisa de paramêtros além do ponteiro, pois ele percorrerá toda a lista procurando o status
+        for task in self.tasks: 
             if task.status == "concluido":
                 self.tasks.remove(task)
                 print("Tarefas concluidas foram excluidas")

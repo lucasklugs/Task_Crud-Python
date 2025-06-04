@@ -26,9 +26,9 @@ while True:
 
 # Selecionando opção concluir
     elif opcao.startswith("done"):
-        partes = opcao.split()
-        if len(partes) == 2 and partes[1].isdigit():
-            task_id = int(partes[1])
+        partes = opcao.split() # Cria a lista partes que divide o comando
+        if len(partes) == 2 and partes[1].isdigit(): # Se o comando que foi divido possui duas partes e a segunda é um digito
+            task_id = int(partes[1]) 
             crud.mark_done(task_id)
         else:
             print("Uso correto: done <ID>")
