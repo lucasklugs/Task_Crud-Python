@@ -1,4 +1,5 @@
 from datetime import date
+from task_repository import TaskRepository
 
 class Task:
     def __init__(self, id: int, priority: str, desc: str, t_date: date, status: str):
@@ -12,14 +13,17 @@ class Task:
         return f"{self.id}, {self.pr}, {self.desc}, {self.date}, {self.status}"
 
 class TaskCrud:
-    def __init__(self):
+    def __init__(self, repository):
         self.tasks = []  
-        self.prox_id = 1
+        self.repository: TaskRepository = repository
+
+
+    def create_table(self):
+        self.repository.create_table()
 
     def create_task(self, priority, desc, t_date, status):
-        task = Task(self.prox_id, priority, desc, t_date, status)
-        self.tasks.append(task)  
-        self.prox_id += 1
+        task = Task(0, priority, desc, t_date, status)
+        self.repository.insert_table(task) 
         print("Tarefa criada")
 
     def read_task(self):

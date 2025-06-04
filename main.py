@@ -1,7 +1,16 @@
+from connection import get_connection
 from task import TaskCrud
 from datetime import date
+from task_repository import TaskRepository
 
-crud = TaskCrud()
+conn = get_connection()
+if not conn:
+    print("Conexão não Encontrada")
+
+task_repository = TaskRepository(conn)
+
+crud = TaskCrud(task_repository)
+crud.create_table()
 
 # Criando o menu
 while True:
