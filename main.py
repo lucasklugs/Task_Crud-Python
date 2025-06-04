@@ -1,6 +1,6 @@
 from connection import get_connection
 from task import TaskCrud
-from datetime import date
+from datetime import date,datetime
 from task_repository import TaskRepository
 
 conn = get_connection()
@@ -24,7 +24,13 @@ while True:
     if opcao == "add":
         priority = input("Prioridade: ")
         desc = input("Descrição: ")
-        t_date = input("Data limite (AAAA-MM-DD): ")
+        while True:
+            t_date = input("Data limite (AAAA-MM-DD): ")
+            try:
+                datetime.strptime(t_date, "%Y-%m-%d")
+                break
+            except ValueError:
+                print("Formato de data inválido.")      
         status = input("Status da tarefa: ")
         crud.create_task(priority, desc, t_date, status)
 
