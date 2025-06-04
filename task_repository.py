@@ -11,7 +11,7 @@ class TaskRepository:
         CREATE TABLE IF NOT EXISTS task (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             priority TEXT NOT NULL,
-            desc TEXT NOT NULL,
+            description TEXT NOT NULL,
             status TEXT NOT NULL,
             t_date TEXT NOT NULL
         );
@@ -24,7 +24,7 @@ class TaskRepository:
         query = """
         INSERT INTO task (
             priority,
-            desc,
+            description,
             status,
             t_date
         ) VALUES (?, ?, ?, ?);
@@ -39,7 +39,7 @@ class TaskRepository:
     
     def read_table(self):
         query = """
-        SELECT id, priority, desc, status, t_date FROM task;
+        SELECT id, priority, description, status, t_date FROM task;
         """
         cursor = self.create_cursor()
         cursor.execute(query)
@@ -48,14 +48,45 @@ class TaskRepository:
         return result  # Retorna result para que a váriavel seja chamada no task.py
     
     def markdone_table(self, task_id):
-        query = """
-        UPDATE task
-        SET status = 'concluido'
-        WHERE id = ?; 
-        """
+        query = "UPDATE task SET status = 'concluída' WHERE id = ?;"
         cursor = self.create_cursor()
         cursor.execute(query, (task_id,))
         self.conn.commit()
         if cursor.rowcount == 0:
-            print("Tarefa não encontrada ou status não alterado")
+            print("Nenhuma tarefa com esse ID foi encontrada.")
+        else:
+            print("Tarefa marcada como concluída.")
+        cursor.close()
+
+    def delete_table(self, task_id):
+        query = "DELETE FROM task WHERE id = ?;"
+        cursor = self.create_cursor()
+        cursor.execute(query, (task_id,))
+        self.conn.commit()
+        if cursor.rowcount == 0:
+            print("Nenhuma tarefa com esse ID foi encontrada.")
+        else:
+            print("Tarefa deletada!")
+        cursor.close()
+
+    def edit_table(self, priority, desc, task_id):
+        query = "UPDATE task SET priority = ?, description = ? WHERE id = ?;"
+        cursor = self.create_cursor()
+        cursor.execute(query, (priority, desc, task_id))
+        self.conn.commit()
+        if cursor.rowcount == 0:
+            print("Nenhuma tarefa com esse ID foi encontrada.")
+        else:
+            print("Tarefa editada.")
+        cursor.close()
+
+    def cleardone_table(self):
+        query = "DELETE FROM task WHERE status = 'concluída';"
+        cursor = self.create_cursor()
+        cursor.execute(query)  # Sem parâmetros
+        self.conn.commit()
+        if cursor.rowcount == 0:
+            print("Nenhuma tarefa foi concluída.")
+        else:
+            print("Tarefas concluídas excluídas...")
         cursor.close()

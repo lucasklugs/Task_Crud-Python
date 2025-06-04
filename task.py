@@ -35,39 +35,16 @@ class TaskCrud:
                 print(f"ID: {result[0]}, Prioridade: {result[1]}, Descrição: {result[2]}, Status: {result[3]}, Data Limite: {result[4]}")
 
     def mark_done(self, task_id):
-        for task in self.tasks:
-            if task.id == task_id:
-                task.status = "concluido"
-                self.repository.markdone_table(task_id)
-                print("Tarefa marcada como concluida.")
-                return
-        print("Tarefa não encontrada...")
+        self.repository.markdone_table(task_id)
 
     def delete_task(self, task_id):
-        for task in self.tasks:
-            if task.id == task_id:
-                self.tasks.remove(task)
-                print("Tarefa removida")
-                return
-            print("Tarefa não encontrada...")
+        self.repository.delete_table(task_id)
 
-    def edit_task(self, task_id, priority, desc):
-        for task in self.tasks:
-            if task.id == task_id:
-                task.pr = priority
-                task.desc = desc
-                print("Tarefa editada")
-                return
-            print("Tarefa não encontrada...")
+    def edit_task(self, priority, desc, task_id):
+        self.repository.edit_table(priority, desc, task_id)
 
-# Deleta todos as tarefas com status "concluido"
-    def delete_done(self): # Não precisa de paramêtros além do ponteiro, pois ele percorrerá toda a lista procurando o status
-        for task in self.tasks: 
-            if task.status == "concluido":
-                self.tasks.remove(task)
-                print("Tarefas concluidas foram excluidas")
-                return
-            print("Você ainda não concluiu nenhuma tarefa")
+    def delete_done(self):
+        self.repository.cleardone_table()
 
     
 

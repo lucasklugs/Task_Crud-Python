@@ -58,7 +58,7 @@ while True:
             task_id = int(partes[1])
             task_pr = input("Qual a prioridade da tarefa? ")
             task_desc = input("Qual a descrição? ")
-            crud.edit_task(task_id, task_pr, task_desc)
+            crud.edit_task(task_pr, task_desc, task_id)
         else:
             print("Uso correto: edit <ID>")
 
