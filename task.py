@@ -27,7 +27,7 @@ class TaskCrud:
         print("Tarefa criada")
 
     def read_task(self):
-        results = self.repository.read_table()
+        results = self.repository.fetch_all() # Recebe todos os dados que es
         if not results:
             print("Nenhuma tarefa encontrada.")
         else:

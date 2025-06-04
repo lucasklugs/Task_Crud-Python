@@ -37,13 +37,13 @@ class TaskRepository:
         cursor.close()
 
     
-    def read_table(self):
+    def fetch_all(self):
         query = """
         SELECT id, priority, description, status, t_date FROM task;
         """
         cursor = self.create_cursor()
         cursor.execute(query)
-        result = cursor.fetchall()  # A várivel result deterá todos os itens consultados por meio do fetchall() 
+        result = cursor.fetchall()  # A várivel result deterá todos os dados consultados por meio do fetchall() 
         cursor.close()
         return result  # Retorna result para que a váriavel seja chamada no task.py
     
@@ -83,7 +83,7 @@ class TaskRepository:
     def cleardone_table(self):
         query = "DELETE FROM task WHERE status = 'concluída';"
         cursor = self.create_cursor()
-        cursor.execute(query)  # Sem parâmetros
+        cursor.execute(query)  
         self.conn.commit()
         if cursor.rowcount == 0:
             print("Nenhuma tarefa foi concluída.")
