@@ -21,12 +21,12 @@ menu = st.sidebar.selectbox("Menu", ["Adicionar", "Listar", "Concluir", "Editar"
 
 if menu == "Adicionar":
     st.subheader("Adicionar Tarefa")
-    prioridade = st.selectbox("Prioridade", ["Baixa", "Média", "Alta"])
-    descricao = st.text_input("Descrição")
+    priority = st.selectbox("Prioridade", ["Baixa", "Média", "Alta"])
+    description = st.text_input("Descrição")
     deadline = st.date_input("Prazo de Entrega", min_value=datetime.today())
     status = st.selectbox("Status", ["Pendente", "Em andamento", "Concluída"])
     if st.button("Salvar Tarefa"):
-        crud.create_task(prioridade, descricao, deadline.isoformat(), status)
+        crud.create_task(priority, description, deadline.isoformat(), status)
         st.success("Tarefa adicionada!")
 
 if menu == "Listar":
@@ -70,7 +70,7 @@ if menu == "Remover":
         st.info("Não há tarefas no banco...")
 
 if menu == "Tarefas de Hoje":
-    st.subheader("Listar todas as tarefas")
+    st.subheader("Tarefas de hoje:")
     crud.today_tasks()
 
 if menu == "Prazos":
