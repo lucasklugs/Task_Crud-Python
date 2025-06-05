@@ -57,7 +57,7 @@ while True:
         partes = opcao.split()
         if len(partes) == 2 and partes[1].isdigit():
             task_id = int(partes[1])
-            task_pr = input("Qual a prioridade da tarefa? ")
+            task_pr = validate_priority()
             task_desc = input("Qual a descrição? ")
             crud.edit_task(task_pr, task_desc, task_id)
         else:

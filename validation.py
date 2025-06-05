@@ -14,9 +14,9 @@ def validate_date():
         t_date = input("Data limite (AAAA-MM-DD): ")
         try:
             datetime.strptime(t_date, "%Y-%m-%d")
-            break
+            return t_date
         except ValueError:
-                print("Formato de data inválido.")
+            print("Formato de data inválido.")
 
 # Valida o input de status
 def validate_status():
