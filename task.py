@@ -1,5 +1,6 @@
 from datetime import datetime, date
 from task_repository import TaskRepository
+import streamlit as st
 
 #Cria constante de mensagem repetitiva 
 MSG_NO_TASKS = "Nenhuma tarefa encontrada..."
@@ -35,42 +36,47 @@ class TaskCrud:
             print(MSG_NO_TASKS)
         else:
             for task in tasks:
-                print(f"ID: {task[0]}, Prioridade: {task[1]}, Descrição: {task[2]}, Status: {task[3]}, Prazo de entrega: {task[4]}")
+                 st.write(f"- **ID:** {task[0]} | **Prioridade:** {task[1]} | **Descrição:** {task[2]} | **Status:** {task[3]} | **Prazo:** {task[4]}")
+    
+    def get_pending_descriptions(self):
+        return self.repository.get_pending_descriptions()
 
-    def mark_done(self, task_id):
-        self.repository.markdone_table(task_id)
+    def get_all_descriptions(self):
+        return self.repository.get_all_descriptions()
 
-    def delete_task(self, task_id):
-        self.repository.delete_table(task_id)
+    def mark_done_by_description(self, description):
+        self.repository.markdone_by_description(description)
 
-    def edit_task(self, priority, desc, task_id):
-        self.repository.edit_table(priority, desc, task_id)
+    def edit_task(self, actual_task, ed_priority, ed_desc, ed_dead):
+        self.repository.edit_table(ed_priority, ed_desc, ed_dead, actual_task)
+
+    def delete_task(self, task_desc):
+        self.repository.delete_table(task_desc)
 
     def today_tasks(self):
         today = datetime.today().date().isoformat()
         tasks = self.repository.get_today_tasks(today)
 
         if not tasks:
-            print("Nenhuma tarefa para hoje ;) ")
+            st.write("Nenhuma tarefa para hoje ;) ")
             return
         
-        print(f"Tarefas para hoje:")
         for task in tasks:
-            print(f"- Task: {task[2]}, Status: {task[3]}")
+            st.write(f"- **Task:** {task[2]} | **Status:** {task[3]}")
     
     def deadline_task(self):
         tasks = self.repository.get_all_tasks_ordered_by_date()
         if not tasks:
-            print(MSG_NO_TASKS)
+            st.write(MSG_NO_TASKS)
             return
 
         datas_vistas = set()
         for task in tasks:
             deadline = task[4]  # Atribue os dados de data que estão na quarta posição do select na váriavel deadline
             if deadline not in datas_vistas:
-                print(f"\n Prazo de Entrega: {deadline}")
+                st.write(f"\n Prazo de Entrega: {deadline}")
                 datas_vistas.add(deadline)
-            print(f"- Prioridade: {task[1]}, Descrição: {task[2]}, Status: {task[3]}")
+            st.write(f"- **Prioridade:** {task[1]} | **Descrição:** {task[2]} | **Status:** {task[3]}")
 
 
     def delete_done(self):

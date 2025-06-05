@@ -1,3 +1,5 @@
+import streamlit as st
+
 class TaskRepository:
 
     def __init__(self, conn):
@@ -50,41 +52,58 @@ class TaskRepository:
         cursor.close()
         return task  # Retorna result para que a váriavel seja chamada no task.py
     
-    # Ação update para atualizar tasks para "concluída"
-    def markdone_table(self, task_id):
-        query = "UPDATE task SET status = 'concluída' WHERE id = ?;"
+    def get_pending_descriptions(self):
+        query = "SELECT description FROM task WHERE status != 'Concluída';"
         cursor = self.create_cursor()
-        cursor.execute(query, (task_id,))
+        cursor.execute(query)
+        descriptions = [row[0] for row in cursor.fetchall()]
+        cursor.close()
+        return descriptions
+
+    # Ação update para atualizar tasks para "concluída"
+    def markdone_by_description(self, description):
+        query = "UPDATE task SET status = 'Concluída' WHERE description = ?;"
+        cursor = self.create_cursor()
+        cursor.execute(query, (description,))
         self.conn.commit()
         if cursor.rowcount == 0:
-            print("Nenhuma tarefa com esse ID foi encontrada.")
+            st.warning("Tarefa não encontrada.")
         else:
-            print("Tarefa marcada como concluída.")
+            st.success("Tarefa marcada como concluída!")
+        cursor.close()
+
+    def get_all_descriptions(self):
+        query = "SELECT description FROM task"
+        cursor = self.create_cursor()
+        cursor.execute(query)
+        descriptions = [row[0] for row in cursor.fetchall()]
+        cursor.close()
+        return descriptions
+    
+    # Ação update para editar prioridade, descrição e data
+    def edit_table(self, ed_priority, ed_desc, ed_dead, actual_task):
+        query = "UPDATE task SET priority = ?, description = ?, deadline = ? WHERE description = ?;"
+        cursor = self.create_cursor()
+        cursor.execute(query, ( ed_priority, ed_desc, ed_dead, actual_task))
+        self.conn.commit()
+        if cursor.rowcount == 0:
+            st.warning("Tarefa não encontrada.")
+        else:
+            st.success("Tarefa editada.")
         cursor.close()
 
     # Ação delete para remover tasks específicas
-    def delete_table(self, task_id):
-        query = "DELETE FROM task WHERE id = ?;"
+    def delete_table(self, task_desc):
+        query = "DELETE FROM task WHERE description = ?;"
         cursor = self.create_cursor()
-        cursor.execute(query, (task_id,))
+        cursor.execute(query, (task_desc,))
         self.conn.commit()
         if cursor.rowcount == 0:
-            print("Nenhuma tarefa com esse ID foi encontrada.")
+            st.warning("Nenhuma tarefa com essa descrição foi encontrada.")
         else:
-            print("Tarefa removida!")
+            st.success("Tarefa removida!")
         cursor.close()
-
-    # Ação update para editar prioridade e descrição
-    def edit_table(self, priority, desc, task_id):
-        query = "UPDATE task SET priority = ?, description = ? WHERE id = ?;"
-        cursor = self.create_cursor()
-        cursor.execute(query, (priority, desc, task_id))
-        self.conn.commit()
-        if cursor.rowcount == 0:
-            print("Nenhuma tarefa com esse ID foi encontrada.")
-        else:
-            print("Tarefa editada.")
-        cursor.close()
+    
 
     # Ação select para listar as tarefas de hoje
     def get_today_tasks(self, date_str):
@@ -106,12 +125,12 @@ class TaskRepository:
 
     # Ação delete para remover tarefas já concluídas
     def cleardone_table(self):
-        query = "DELETE FROM task WHERE status = 'concluída';"
+        query = "DELETE FROM task WHERE status = 'Concluída';"
         cursor = self.create_cursor()
         cursor.execute(query)  
         self.conn.commit()
         if cursor.rowcount == 0:
-            print("Nenhuma tarefa foi concluída.")
+            st.warning("Nenhuma tarefa foi concluída.")
         else:
-            print("Tarefas concluídas excluídas...")
+            st.success("Tarefas concluídas excluídas...")
         cursor.close()
