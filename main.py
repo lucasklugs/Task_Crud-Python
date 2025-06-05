@@ -15,14 +15,15 @@ crud.create_table()
 
 # Criando o menu
 while True:
-    print("\n--- Gerenciador de Tarefas ---")
-    print("Escreva abaixo um dos comandos")
-    print("add | list | done <ID> | remove <ID> | edit <ID> | clear-done")
+    print("|                                                                                                                       |")
+    print("|                                      --- Gerenciador de Tarefas ---                                                   |")
+    print("|                                       Escreva abaixo um dos comandos                                                  |")
+    print("| adicionar | listar | concluir <ID> | remover <ID> | editar <ID> | tasks_hoje | prazos | limpar concluidas | finalizar |")
 
     opcao = input("Escolha uma opção: ")
 
 # Selecionando opção adicionar
-    if opcao == "add":
+    if opcao == "adicionar":
         priority = validate_priority()
         desc = input("Descrição: ")
         t_date = validate_date()      
@@ -31,29 +32,29 @@ while True:
 
 
 # Selecionando opção listar
-    elif opcao == "list":
+    elif opcao == "listar":
         crud.read_task()
 
 # Selecionando opção concluir
-    elif opcao.startswith("done"):
+    elif opcao.startswith("concluir"):
         partes = opcao.split() # Cria a lista partes que divide o comando
         if len(partes) == 2 and partes[1].isdigit(): # Se o comando que foi divido possui duas partes e a segunda é um digito
             task_id = int(partes[1]) 
             crud.mark_done(task_id)
         else:
-            print("Uso correto: done <ID>")
+            print("Uso correto: concluir <ID>")
 
 # Selecionando opção remover
-    elif opcao.startswith("remove"):
+    elif opcao.startswith("remover"):
         partes = opcao.split()
         if len(partes) == 2 and partes[1].isdigit():
             task_id = int(partes[1])
             crud.delete_task(task_id)
         else:
-            print("Uso correto: remove <ID>")
+            print("Uso correto: remover <ID>")
 
 # Selecionando opção editar
-    elif opcao.startswith("edit"):
+    elif opcao.startswith("editar"):
         partes = opcao.split()
         if len(partes) == 2 and partes[1].isdigit():
             task_id = int(partes[1])
@@ -61,8 +62,20 @@ while True:
             task_desc = input("Qual a descrição? ")
             crud.edit_task(task_pr, task_desc, task_id)
         else:
-            print("Uso correto: edit <ID>")
+            print("Uso correto: editar <ID>")
+
+# Selecionando opção de listar as tarefas para hoje
+    elif opcao == "tasks_hoje":
+        crud.today_tasks()
+
+# Selecionando opção de listar as tarefas por data
+    elif opcao == "prazos":
+        crud.deadline_task()
 
 # Selecionando opção deletar concluidos
-    elif opcao == "clear-done":
+    elif opcao == "limpar concluidas":
         crud.delete_done()
+
+# Selecionando opção deletar concluidos
+    elif opcao == "finalizar":
+        break

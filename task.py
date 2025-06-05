@@ -1,5 +1,8 @@
-from datetime import date
+from datetime import datetime, date
 from task_repository import TaskRepository
+
+#Cria constante de mensagem repetitiva 
+MSG_NO_TASKS = "Nenhuma tarefa encontrada..."
 
 class Task:
     def __init__(self, id: int, priority: str, desc: str, t_date: date, status: str):
@@ -27,12 +30,12 @@ class TaskCrud:
         print("Tarefa criada")
 
     def read_task(self):
-        results = self.repository.fetch_all() # Recebe todos os dados que es
-        if not results:
-            print("Nenhuma tarefa encontrada.")
+        tasks = self.repository.fetch_all() # Recebe todos os dados consultados pela query
+        if not tasks:
+            print(MSG_NO_TASKS)
         else:
-            for result in results:
-                print(f"ID: {result[0]}, Prioridade: {result[1]}, Descrição: {result[2]}, Status: {result[3]}, Data Limite: {result[4]}")
+            for task in tasks:
+                print(f"ID: {task[0]}, Prioridade: {task[1]}, Descrição: {task[2]}, Status: {task[3]}, Prazo de entrega: {task[4]}")
 
     def mark_done(self, task_id):
         self.repository.markdone_table(task_id)
@@ -42,6 +45,33 @@ class TaskCrud:
 
     def edit_task(self, priority, desc, task_id):
         self.repository.edit_table(priority, desc, task_id)
+
+    def today_tasks(self):
+        today = datetime.today().date().isoformat()
+        tasks = self.repository.get_today_tasks(today)
+
+        if not tasks:
+            print("Nenhuma tarefa para hoje ;) ")
+            return
+        
+        print(f"Tarefas para hoje:")
+        for task in tasks:
+            print(f"- Task: {task[2]}, Status: {task[3]}")
+    
+    def deadline_task(self):
+        tasks = self.repository.get_all_tasks_ordered_by_date()
+        if not tasks:
+            print(MSG_NO_TASKS)
+            return
+
+        datas_vistas = set()
+        for task in tasks:
+            deadline = task[4]  # Atribue os dados de data que estão na quarta posição do select na váriavel deadline
+            if deadline not in datas_vistas:
+                print(f"\n Prazo de Entrega: {deadline}")
+                datas_vistas.add(deadline)
+            print(f"- Prioridade: {task[1]}, Descrição: {task[2]}, Status: {task[3]}")
+
 
     def delete_done(self):
         self.repository.cleardone_table()

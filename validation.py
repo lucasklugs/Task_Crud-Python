@@ -11,7 +11,7 @@ def validate_priority():
 # Valida o input de data
 def validate_date():
     while True:
-        t_date = input("Data limite (AAAA-MM-DD): ")
+        t_date = input("Prazo de Entrega (AAAA-MM-DD): ")
         try:
             datetime.strptime(t_date, "%Y-%m-%d")
             return t_date
