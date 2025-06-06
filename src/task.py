@@ -33,7 +33,11 @@ class TaskCrud:
             st.warning("Não há tarefas no banco...")
         else:
             for task in tasks:
-                 st.write(f"- **ID:** {task[0]} | **Prioridade:** {task[1]} | **Descrição:** {task[2]} | **Status:** {task[3]} | **Prazo:** {task[4]}")
+                with st.expander(f"Tarefa ID: {task[0]}"):  
+                    st.write(f"**Prioridade:** {task[1]}")
+                    st.write(f"**Task:** {task[2]}")
+                    st.write(f"**Status:** {task[3]}")
+                    st.write(f"**Prazo:** {task[4]}")
     
     def get_pending_descriptions(self):
         return self.repository.get_pending_descriptions()
@@ -55,11 +59,12 @@ class TaskCrud:
         tasks = self.repository.get_today_tasks(today)
 
         if not tasks:
-            st.write("Nenhuma tarefa para hoje ;) ")
+            st.info(f"Nenhuma tarefa para hoje 😜")
             return
         
         for task in tasks:
-            st.write(f"- **Task:** {task[2]} | **Status:** {task[3]}")
+            with st.container(border=True):  # Cria um container com borda para cada tarefa
+                st.write(f"**Task:** {task[2]} | **Status:** {task[3]}")
     
     def deadline_task(self):
         tasks = self.repository.get_all_tasks_ordered_by_date()
@@ -71,9 +76,10 @@ class TaskCrud:
         for task in tasks:
             deadline = task[4]  # Atribue os dados de data que estão na quarta posição do select na váriavel deadline
             if deadline not in datas_vistas:
-                st.write(f"\n Prazo de Entrega: {deadline}")
+                st.subheader(f"\n Prazo de Entrega: {deadline}")
                 datas_vistas.add(deadline)
-            st.write(f"- **Prioridade:** {task[1]} | **Descrição:** {task[2]} | **Status:** {task[3]}")
+            with st.container(border=True):  # Cria um container com borda para cada tarefa
+                st.write(f"**Task:** {task[2]} | **Status:** {task[3]}")
 
 
     def delete_done(self):
