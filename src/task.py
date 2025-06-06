@@ -2,9 +2,6 @@ from datetime import datetime, date
 from task_repository import TaskRepository
 import streamlit as st
 
-#Cria constante de mensagem repetitiva 
-MSG_NO_TASKS = "Nenhuma tarefa encontrada..."
-
 class Task:
     def __init__(self, id: int, priority: str, desc: str, t_date: date, status: str):
         self.id     = id
@@ -33,7 +30,7 @@ class TaskCrud:
     def read_task(self):
         tasks = self.repository.fetch_all() # Recebe todos os dados consultados pela query
         if not tasks:
-            print(MSG_NO_TASKS)
+            st.warning("Não há tarefas no banco...")
         else:
             for task in tasks:
                  st.write(f"- **ID:** {task[0]} | **Prioridade:** {task[1]} | **Descrição:** {task[2]} | **Status:** {task[3]} | **Prazo:** {task[4]}")
@@ -67,7 +64,7 @@ class TaskCrud:
     def deadline_task(self):
         tasks = self.repository.get_all_tasks_ordered_by_date()
         if not tasks:
-            st.write(MSG_NO_TASKS)
+            st.info("Não há tarefas no banco...")
             return
 
         datas_vistas = set()

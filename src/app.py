@@ -12,14 +12,7 @@ task_repository = TaskRepository(conn)
 crud = TaskCrud(task_repository)
 crud.create_table()
 
-# Cria o menu principal
-st.title("Gerenciador de Tarefas")
-st.write("Organize, acompanhe e conclua suas tarefas de forma simples e eficiente. Nosso sistema permite criar, editar e gerenciar atividades do dia a dia com praticidade e controle total.")
-
-# Cria a barra lateral e um select box para as opções de CRUD
-menu = st.sidebar.selectbox("Menu", ["Adicionar", "Listar", "Concluir", "Editar", "Remover", "Tarefas de Hoje", "Prazos", "Limpar Concluídas"])
-
-if menu == "Adicionar":
+def add_task():
     st.subheader("Adicionar Tarefa")
     priority = st.selectbox("Prioridade", ["Baixa", "Média", "Alta"])
     description = st.text_input("Descrição")
@@ -29,11 +22,11 @@ if menu == "Adicionar":
         crud.create_task(priority, description, deadline.isoformat(), status)
         st.success("Tarefa adicionada!")
 
-if menu == "Listar":
+def list_task():
     st.subheader("Listar todas as tarefas")
     crud.read_task()
 
-if menu == "Concluir":
+def complete_task():
     st.subheader("Concluir tarefas")
     descriptions = crud.get_pending_descriptions()
 
@@ -44,7 +37,7 @@ if menu == "Concluir":
     else:
         st.info("Não há tarefas pendentes para concluir.")
 
-if menu == "Editar":
+def edit_task():
     st.subheader("Editar Tarefas")
     descriptions = crud.get_all_descriptions()
 
@@ -58,7 +51,7 @@ if menu == "Editar":
     else:
         st.info("Não há tarefas no banco...")
 
-if menu == "Remover":
+def remove_task():
     st.subheader("Remover tarefas")
     descriptions = crud.get_all_descriptions()
 
@@ -69,15 +62,34 @@ if menu == "Remover":
     else:
         st.info("Não há tarefas no banco...")
 
-if menu == "Tarefas de Hoje":
+def list_today_bydate():
     st.subheader("Tarefas de hoje:")
     crud.today_tasks()
 
-if menu == "Prazos":
+def deadline_task():
     st.subheader("Prazos")
     crud.deadline_task()
 
-if menu == "Limpar Concluídas":
+def cleardone_task():
     st.subheader("Remover tarefas concluídas")
     if st.button("Excluir"):
         crud.delete_done()
+
+menu_actions = {
+    "Adicionar": add_task,
+    "Listar": list_task,
+    "Concluir": complete_task,
+    "Editar": edit_task,
+    "Remover": remove_task,
+    "Tarefas de Hoje": list_today_bydate,
+    "Prazos": deadline_task,
+    "Finalizar Concluídas": cleardone_task
+}
+
+# Cria o menu principal
+st.title("Gerenciador de Tarefas")
+st.write("Organize, acompanhe e conclua suas tarefas de forma simples e eficiente. Nosso sistema permite criar, editar e gerenciar atividades do dia a dia com praticidade e controle total.")
+
+# Cria a barra lateral e um select box para as opções de CRUD
+menu = st.sidebar.selectbox("Menu", list(menu_actions.keys()))
+menu_actions[menu]()
