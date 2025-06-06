@@ -34,12 +34,17 @@ class TaskRepository:
             deadline
         ) VALUES (?, ?, ?, ?);
         """
-        cursor = self.create_cursor()
-        result = cursor.execute(query, (task.pr, task.desc, task.status, task.date)).lastrowid
-        if not result:
-            print("Tarefa não incluida")
-        self.conn.commit()
-        cursor.close()
+
+        try:
+            cursor = self.create_cursor()
+            result = cursor.execute(query, (task.pr, task.desc, task.status, task.date)).lastrowid
+            if not result:
+                print("Tarefa não incluida")
+            self.conn.commit()
+            cursor.close()
+            return result
+        except Exception as e:
+            st.info(e)
 
     # Ação select para listar todos os campos do banco   
     def fetch_all(self):

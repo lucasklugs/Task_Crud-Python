@@ -1,8 +1,8 @@
 # db_connection.py
 import sqlite3
 
-from utils import parse_datetime
-from config import DATABASE_PATH
+from src.utils import parse_datetime
+from src.config import DATABASE_PATH
 
 # Registrar o conversor para o tipo DATETIME
 sqlite3.register_converter("DATETIME", parse_datetime)

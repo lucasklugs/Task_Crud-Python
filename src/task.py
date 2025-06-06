@@ -1,5 +1,5 @@
 from datetime import datetime, date
-from task_repository import TaskRepository
+from src.task_repository import TaskRepository
 import streamlit as st
 
 class Task:
@@ -24,8 +24,9 @@ class TaskCrud:
 
     def create_task(self, priority, desc, t_date, status):
         task = Task(0, priority, desc, t_date, status)
-        self.repository.insert_table(task) 
+        result = self.repository.insert_table(task) 
         print("Tarefa criada")
+        return result
 
     def read_task(self):
         tasks = self.repository.fetch_all() # Recebe todos os dados consultados pela query

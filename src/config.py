@@ -1,2 +1,2 @@
 # config.py
-DATABASE_PATH = "../data/database.db"
+DATABASE_PATH = "data/database.db"
