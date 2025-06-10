@@ -1,5 +1,8 @@
 import streamlit as st
 
+class TaskRepositoryException(Exception):
+    pass
+
 class TaskRepository:
 
     def __init__(self, conn):
@@ -34,48 +37,65 @@ class TaskRepository:
             deadline
         ) VALUES (?, ?, ?, ?);
         """
-
         try:
             cursor = self.create_cursor()
             result = cursor.execute(query, (task.pr, task.desc, task.status, task.date)).lastrowid
+            print(f"resultado = {result}")
             if not result:
-                print("Tarefa não incluida")
+                raise TaskRepositoryException("Tarefa não incluida")
             self.conn.commit()
             cursor.close()
             return result
+        except TaskRepositoryException as e:
+            st.error(str(e))
+            return str(e)
         except Exception as e:
-            st.info(e)
+            st.error(f"Erro inesperado: {e}")
+            return f"Erro inesperado: {e}"
 
     # Ação select para listar todos os campos do banco   
     def fetch_all(self):
         query = """
         SELECT id, priority, description, status, deadline FROM task;
         """
-        cursor = self.create_cursor()
-        cursor.execute(query)
-        task = cursor.fetchall()  # A várivel result deterá todos os dados consultados por meio do fetchall() 
-        cursor.close()
-        return task  # Retorna result para que a váriavel seja chamada no task.py
-    
+        try:
+            cursor = self.create_cursor()
+            cursor.execute(query)
+            task = cursor.fetchall()  # A várivel result deterá todos os dados consultados por meio do fetchall() 
+            cursor.close()
+            return task  # Retorna result para que a váriavel seja chamada no task.py
+        except Exception as e:
+            st.error(f"Erro inesperado: {e}")
+            return f"Erro inesperado: {e}"
+
     def get_pending_descriptions(self):
         query = "SELECT description FROM task WHERE status != 'Concluída';"
-        cursor = self.create_cursor()
-        cursor.execute(query)
-        descriptions = [row[0] for row in cursor.fetchall()]
-        cursor.close()
-        return descriptions
+        try:
+            cursor = self.create_cursor()
+            cursor.execute(query)
+            descriptions = [row[0] for row in cursor.fetchall()]
+            cursor.close()
+            return descriptions
+        except Exception as e:
+            st.error(f"Erro inesperado: {e}")
+            return f"Erro inesperado: {e}"
 
     # Ação update para atualizar tasks para "concluída"
     def markdone_by_description(self, description):
         query = "UPDATE task SET status = 'Concluída' WHERE description = ?;"
-        cursor = self.create_cursor()
-        cursor.execute(query, (description,))
-        self.conn.commit()
-        if cursor.rowcount == 0:
-            st.warning("Tarefa não encontrada.")
-        else:
-            st.success("Tarefa marcada como concluída!")
-        cursor.close()
+        try:
+            cursor = self.create_cursor()
+            cursor.execute(query, (description,))
+            if cursor.rowcount == 0:
+                raise TaskRepositoryException("Tarefa não encontrada.")
+            self.conn.commit()
+            cursor.close()
+        except TaskRepositoryException as e:
+            st.error(str(e))
+            return str(e)
+        except Exception as e:
+            st.error(f"Erro inesperado: {e}")
+            return f"Erro inesperado: {e}"
 
     def get_all_descriptions(self):
         query = "SELECT description FROM task"
@@ -85,39 +105,51 @@ class TaskRepository:
         cursor.close()
         return descriptions
     
-    # Ação update para editar prioridade, descrição e data
     def edit_table(self, ed_priority, ed_desc, ed_dead, actual_task):
         query = "UPDATE task SET priority = ?, description = ?, deadline = ? WHERE description = ?;"
-        cursor = self.create_cursor()
-        cursor.execute(query, ( ed_priority, ed_desc, ed_dead, actual_task))
-        self.conn.commit()
-        if cursor.rowcount == 0:
-            st.warning("Tarefa não encontrada.")
-        else:
-            st.success("Tarefa editada.")
-        cursor.close()
+        try:
+            cursor = self.create_cursor()
+            cursor.execute(query, (ed_priority, ed_desc, ed_dead, actual_task))
+            self.conn.commit()
+            if cursor.rowcount == 0:
+                raise TaskRepositoryException("Tarefa não encontrada.")
+            cursor.close()
+            return "Tarefa editada."
+        except TaskRepositoryException as e:
+            st.warning(str(e))
+            return str(e)
+        except Exception as e:
+            st.error(f"Erro inesperado: {e}")
+            return f"Erro inesperado: {e}"
 
-    # Ação delete para remover tasks específicas
     def delete_table(self, task_desc):
         query = "DELETE FROM task WHERE description = ?;"
-        cursor = self.create_cursor()
-        cursor.execute(query, (task_desc,))
-        self.conn.commit()
-        if cursor.rowcount == 0:
-            st.warning("Nenhuma tarefa com essa descrição foi encontrada.")
-        else:
-            st.success("Tarefa removida!")
-        cursor.close()
-    
+        try:
+            cursor = self.create_cursor()
+            cursor.execute(query, (task_desc,))
+            self.conn.commit()
+            if cursor.rowcount == 0:
+                raise TaskRepositoryException("Tarefa não encontrada.")
+            cursor.close()
+            return "Tarefa removida!"
+        except TaskRepositoryException as e:
+            st.warning(str(e))
+            return str(e)
+        except Exception as e:
+            st.error(f"Erro inesperado: {e}")
+            return f"Erro inesperado: {e}"
 
-    # Ação select para listar as tarefas de hoje
     def get_today_tasks(self, date_str):
         query = "SELECT id, priority, description, status, deadline FROM task WHERE deadline = ?"
-        cursor = self.conn.cursor()
-        cursor.execute(query, (date_str,))
-        tasks = cursor.fetchall()
-        cursor.close()
-        return tasks
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(query, (date_str,))
+            tasks = cursor.fetchall()
+            cursor.close()
+            return tasks
+        except Exception as e:
+            st.error(f"Erro inesperado: {e}")
+            return f"Erro inesperado: {e}"
 
     # Ação select para listar as tarefas por data
     def get_all_tasks_ordered_by_date(self):
